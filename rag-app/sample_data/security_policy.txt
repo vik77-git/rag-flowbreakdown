@@ -1,0 +1,98 @@
+NORTHWIND ANALYTICS INFORMATION SECURITY POLICY
+Version 3.2 - Fictional sample document for demonstration only
+
+1. Purpose and Scope
+This policy defines the mandatory security controls for all Northwind Analytics
+production systems, internal tools and third-party integrations. It applies to every
+employee, contractor and automated service account that accesses company systems.
+Exceptions require written approval from the Security Review Board and must be
+recorded in the exception register with an expiry date of no more than 90 days.
+
+2. Data Classification
+Northwind classifies data into four tiers: Public, Internal, Confidential and
+Restricted. Restricted data includes customer financial records and authentication
+secrets. Confidential and Restricted data must be encrypted at rest using AES-256 and
+in transit using TLS 1.2 or higher. Internal data may be stored on managed endpoints
+provided full-disk encryption is enabled. Public data has no encryption requirement but
+still requires integrity controls before publication.
+
+3. Access Control
+3.1 Least Privilege
+Access is granted on a least-privilege basis. Every entitlement must map to a documented
+role. Standing administrative access to production is prohibited; administrators request
+time-bound elevation that expires automatically after four hours.
+
+3.2 Access Reviews
+Team leads review entitlements every quarter. Access for departing personnel must be
+revoked within four hours of termination. Service account credentials are reviewed every
+90 days and rotated at least annually.
+
+3.3 Segregation of Duties
+The engineer who authors a production change may not be the sole approver of that change.
+Release approval and deployment execution are separated for all Restricted systems.
+
+4. Authentication
+4.1 Password Requirements
+Passwords must be at least 14 characters, screened against a breached-password list, and
+may not be reused across systems. Password rotation is not forced on a schedule; rotation
+is required on suspicion of compromise.
+
+4.2 Multi-Factor Authentication
+Multi-factor authentication is mandatory for all remote access, all administrative
+consoles and any system holding Confidential or Restricted data. Phishing-resistant
+factors such as FIDO2 security keys are required for privileged accounts. SMS-based
+one-time codes are permitted only as a temporary fallback and must be disabled by the end
+of the fiscal year. Session tokens expire after 12 hours of inactivity and are bound to
+the issuing device.
+
+4.3 Authentication Risks
+The principal authentication risks identified in the last assessment are credential
+stuffing against the customer portal, phishing of employee single sign-on credentials,
+session token theft through cross-site scripting, and weakly protected service account
+keys stored in source repositories. Mitigations include rate limiting, breached-password
+screening, hardware-backed factors, short token lifetimes and automated secret scanning
+of all repositories on every push.
+
+5. Authorization
+Authorization decisions are enforced server-side on every request. Client-side checks are
+treated as user-interface hints only. Roles are stored in a dedicated authorization
+service and never in a user profile record, preventing privilege escalation through
+profile edits. Every authorization denial is logged with the subject, resource and policy
+that produced the decision.
+
+6. Logging and Monitoring
+Security-relevant events are shipped to the central log platform within 60 seconds and
+retained for 400 days. Logs must never contain passwords, tokens, or complete customer
+records. Alerting thresholds are reviewed monthly by the detection engineering team.
+
+7. Incident Response
+7.1 Severity Levels
+Incidents are graded S1 to S4. An S1 incident is a confirmed compromise of Restricted
+data or a full production outage.
+
+7.2 Response Timelines
+An on-call responder must acknowledge an S1 incident within 15 minutes and declare an
+incident channel within 30 minutes. Customer notification for confirmed unauthorised
+access to Restricted data occurs within 72 hours of confirmation.
+
+7.3 Authentication-Related Incidents
+Any incident involving suspected credential compromise triggers mandatory session
+revocation for the affected accounts, forced re-enrolment of authentication factors, and a
+review of the access entitlements held by those accounts. The incident report must state
+whether multi-factor authentication was enforced on the affected path; if it was not, a
+remediation task is opened with a 30-day deadline.
+
+7.4 Post-Incident Review
+A blameless review is completed within ten business days for all S1 and S2 incidents.
+Actions are tracked to closure and reported to the Security Review Board.
+
+8. Vendor and Third-Party Risk
+Vendors handling Confidential or Restricted data complete a security assessment before
+contract signature and annually thereafter. Contracts must include breach notification
+within 24 hours and a right to audit.
+
+9. Security Recommendations
+The Security Review Board recommends prioritising phishing-resistant multi-factor
+authentication for all staff, eliminating standing production access, expanding automated
+secret scanning to build artefacts, and rehearsing the incident response plan twice per
+year with a credential-compromise scenario.

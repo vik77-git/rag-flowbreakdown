@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="A browser-based RAG workspace: upload a document, watch hybrid retrieval run, and get cited answers." />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="RAG Document Analysis Workspace" />
+  <meta property="og:description" content="Upload a document, inspect retrieval, and generate cited answers in the browser." />
+  <meta name="twitter:card" content="summary" />
+  <title>RAG Document Analysis Workspace</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/src/styles.css" />
+</head>
+<body>
+<div class="app-shell">
+  <aside class="sidebar" aria-label="Workspace sidebar">
+    <div class="sidebar-brand">
+      <div class="brandmark">R</div>
+      <div class="brand-copy"><strong>RAG Workspace</strong><span>Analysis console</span></div>
+    </div>
+    <nav class="sidebar-nav" aria-label="Workspace areas">
+      <button class="nav-item active" data-target="workflow" type="button"><span class="nav-icon">⌂</span><span>Workspace</span></button>
+      <button class="nav-item" data-target="documents" type="button"><span class="nav-icon">▤</span><span>Documents</span></button>
+      <button class="nav-item" data-target="evidence" type="button"><span class="nav-icon">◎</span><span>Evidence</span></button>
+      <button class="nav-item" data-target="usage" type="button"><span class="nav-icon">◇</span><span>Usage</span></button>
+    </nav>
+    <section class="docs" id="documents">
+      <div class="section-title">
+        <div><span class="eyebrow">Knowledge base</span><h2>Documents</h2></div>
+        <label class="upload" title="Upload document">＋<input id="fileInput" type="file" accept=".pdf,.docx,.txt,.md" hidden /></label>
+      </div>
+      <p id="uploadStatus" class="status hidden"></p>
+      <ul id="docList" class="doclist"></ul>
+      <p class="sidebar-note">Hover to expand · one document at a time</p>
+    </section>
+    <div class="sidebar-status"><span class="status-dot"></span><span id="metaHealth" class="badge">checking…</span></div>
+  </aside>
+
+  <main class="workspace">
+    <header class="topbar">
+      <div class="title-wrap"><p class="eyebrow">Document analysis</p><h1>Research workspace</h1></div>
+      <div class="topmeta">
+        <span id="metaDocs">0 documents</span>
+        <span id="metaModel">model —</span>
+        <span id="metaSession">session 0 tokens</span>
+      </div>
+    </header>
+
+    <section class="workflow" id="workflow">
+      <div class="section-title"><div><span class="eyebrow">Live pipeline</span><h2>Retrieval workflow</h2></div><span id="stageNote" class="hint"></span></div>
+      <ol id="stages" class="stages"></ol>
+    </section>
+
+    <div class="workgrid">
+      <section class="chat-panel">
+        <div class="chat-heading">
+          <div><span class="eyebrow">Grounded conversation</span><h2>Ask your document</h2></div>
+          <div class="chat-tools">
+            <span id="answerModel" class="hint"></span>
+            <button id="clearChat" class="ghost" type="button" title="Clear chat and memory">Clear chat + memory</button>
+          </div>
+        </div>
+        <div id="chatScroll" class="chat-scroll"></div>
+        <div class="composer">
+          <div class="examples" id="examples"></div>
+          <div class="prompt-surface">
+            <textarea id="queryInput" rows="2" placeholder="Ask a question about the selected document…"></textarea>
+            <button id="askBtn" class="primary" title="Generate answer">↑</button>
+          </div>
+          <div class="askrow">
+            <select id="modelSelect" aria-label="Model"><option value="auto">Auto model</option></select>
+            <button id="promptToggle" class="ghost" type="button">System prompt</button>
+          </div>
+          <p id="modelHint" class="hint"></p>
+          <div id="promptBox" class="hidden"><textarea id="systemPrompt" rows="4"></textarea><p class="hint">Safety and citation rules remain active.</p></div>
+        </div>
+      </section>
+
+      <aside class="context-rail" id="evidence">
+        <section class="context-tabs">
+          <input type="radio" name="context-tab" id="tabPreview" checked><label for="tabPreview">Preview</label>
+          <input type="radio" name="context-tab" id="tabEvidence"><label for="tabEvidence">Evidence</label>
+          <div class="preview tab-panel">
+            <div class="section-title"><div><span class="eyebrow">Source viewer</span><h2 id="previewTitle">Document preview</h2></div><button id="previewToggle" class="icon-button" type="button" title="Collapse preview">⌃</button></div>
+            <span id="previewMeta" class="hint"></span>
+            <div id="previewPanel">
+              <div class="previewrow">
+                <select id="pageSelect" class="hidden" aria-label="Page"></select>
+                <select id="sectionSelect" class="hidden" aria-label="Section"></select>
+              </div>
+              <pre id="previewBody" class="previewbody">Select a document to preview its extracted text.</pre>
+            </div>
+          </div>
+          <div class="chunks tab-panel">
+            <div class="section-title"><div><span class="eyebrow">Evidence</span><h2>Retrieved content</h2></div><span id="chunkCount" class="hint"></span></div>
+            <div id="chunkList" class="chunklist"><p class="hint">Run a query to inspect ranked chunks.</p></div>
+          </div>
+        </section>
+      </aside>
+    </div>
+
+    <section class="usage" id="usage">
+      <div class="metric-group"><div class="section-title"><h2>Query usage</h2></div><table class="kv" id="usageTable"><tbody></tbody></table></div>
+      <div class="metric-group"><div class="section-title"><h2>Latency</h2></div><table class="kv" id="latencyTable"><tbody></tbody></table></div>
+      <div class="metric-group"><div class="section-title"><h2>Session usage</h2></div><table class="kv" id="sessionTable"><tbody></tbody></table></div>
+    </section>
+  </main>
+</div>
+<div id="toast" class="toast hidden"></div>
+<script type="module" src="/src/main.js"></script>
+</body>
+</html>

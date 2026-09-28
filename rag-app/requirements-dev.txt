@@ -1,0 +1,4 @@
+# Development and test only.
+-r requirements.txt
+pytest>=8.0
+reportlab>=4.0   # scripts/make_sample_binaries.py (sample PDF generation)

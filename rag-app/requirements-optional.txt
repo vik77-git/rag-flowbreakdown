@@ -1,0 +1,11 @@
+# Heavy, optional upgrades. Install only if you want neural embeddings and a
+# persistent vector store: `pip install -r requirements-optional.txt`
+# (~2 GB with torch, plus a model download on first run).
+#
+# Without these the app still works:
+#   sentence-transformers -> deterministic hashing embedder (embeddings/local.py)
+#   chromadb              -> in-memory vector store (retrieval/chroma_store.py)
+#   tiktoken              -> len(text)//4 token estimate (utils/tokens.py)
+sentence-transformers>=3.0
+chromadb>=0.5
+tiktoken>=0.7
